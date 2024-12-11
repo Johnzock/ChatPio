@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+    <div id="auth-container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <input type="text" id="login-username" placeholder="Usuario" required />
+        <input type="password" id="login-password" placeholder="Contraseña" required />
+        <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <h2>Registro</h2>
+    <form id="register-form">
+        <input type="text" id="register-username" placeholder="Usuario" required />
+        <input type="password" id="register-password" placeholder="Contraseña" required />
+        <button type="submit">Registrarse</button>
+    </form>
+    </div>
+
+    <div id="chat-container" style="display:none;">
+        <div id="message-container"></div>
+        <form id="send-container">
+            <input type="text" id="message-input" placeholder="Escribe un mensaje" required />
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./scrip.js"></script>
+</body>
+</html>
