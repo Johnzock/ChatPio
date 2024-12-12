@@ -9,9 +9,12 @@ const messageContainer = document.getElementById('message-container');
 const authContainer = document.getElementById('auth-container');
 const chatContainer = document.getElementById('chat-container');
 const cerrarSesionBtt = document.querySelector('.cerrar-sesion-btt');
-
+const selectGrupo = document.getElementById('select-grupo');
+const unirseGrupoBtt = document.querySelector('.unirse-grupo-btt');
+const crearGrupoBtt = document.querySelector('.crear-grupo-btt');
 
 let username = '';  // Variable para guardar el nombre de usuario
+let currentGroup = '';  // Almacenar el grupo actual en el que el usuario está
 
 // Login
 loginForm.addEventListener('submit', async (e) => {
@@ -26,33 +29,48 @@ loginForm.addEventListener('submit', async (e) => {
     });
 
     if (response.ok) {
-        const data = await response.json();  // Obtener el nombre de usuario desde la respuesta
-        username = data.username;  // Guardar el nombre de usuario
+        const data = await response.json();
+        username = data.username;
         alert('Inicio de sesión exitoso');
         authContainer.style.display = 'none';
         chatContainer.style.display = 'block';
+        cargarGrupos();  // Cargar los grupos disponibles
     } else {
         alert('Error al iniciar sesión');
     }
 });
 
-
-// Registro
-registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('register-username').value;
-    const password = document.getElementById('register-password').value;
-
-    const response = await fetch('/registro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `username=${username}&password=${password}`,
+// Cargar grupos
+async function cargarGrupos() {
+    const response = await fetch('/grupos');
+    const grupos = await response.json();
+    selectGrupo.innerHTML = '<option value="">Selecciona un Grupo</option>';
+    grupos.forEach(grupo => {
+        const option = document.createElement('option');
+        option.value = grupo.nombre;
+        option.textContent = grupo.nombre;
+        selectGrupo.appendChild(option);
     });
+}
 
-    if (response.ok) {
-        alert('Registro exitoso');
-    } else {
-        alert('Error al registrarse');
+// Unirse a un grupo
+unirseGrupoBtt.addEventListener('click', async () => {
+    const groupName = selectGrupo.value;
+    if (groupName) {
+        const response = await fetch('/unirse-grupo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, nombreGrupo: groupName }),
+        });
+
+        if (response.ok) {
+            alert(`Te has unido al grupo: ${groupName}`);
+            currentGroup = groupName;
+            socket.emit('join-group', { username, groupName });  // Unirse al grupo en Socket.IO
+            chatContainer.style.display = 'block';
+        } else {
+            alert('Error al unirse al grupo');
+        }
     }
 });
 
@@ -60,33 +78,30 @@ registerForm.addEventListener('submit', async (e) => {
 messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const mensaje = messageInput.value;
-    socket.emit('send-chat-message', { mensaje, username });  // Emitir solo al servidor
-    messageInput.value = '';  // Limpiar el campo de texto
+    if (currentGroup) {
+        socket.emit('send-chat-message', { mensaje, username, groupName: currentGroup });
+    }
+    messageInput.value = '';
 });
 
 // Recibir mensaje
 socket.on('chat-message', (data) => {
-    appendMessage(`${data.username}: ${data.mensaje}`);  // Mostrar el nombre de usuario junto con el mensaje
+    if (data.groupName === currentGroup) {
+        appendMessage(`${data.username}: ${data.mensaje}`);
+    }
 });
 
-// Mostrar mensaje en el chat
 function appendMessage(mensaje) {
     const messageElement = document.createElement('div');
     messageElement.innerText = mensaje;
     messageContainer.appendChild(messageElement);
 }
 
-
+// Cerrar sesión
 cerrarSesionBtt.addEventListener('click', () => {
-    // Emitir un evento para cerrar sesión en el servidor usando socket.io
     socket.emit('logout', username);
-
-    // Restablecer el nombre de usuario
     username = '';
-
-    // Mostrar la pantalla de autenticación y ocultar el chat
     authContainer.style.display = 'block';
     chatContainer.style.display = 'none';
-
     alert('Sesión cerrada');
 });

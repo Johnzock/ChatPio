@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Usuario = require('./models/usuario');
+const Grupo = require('./models/grupo');
 const socketIo = require('socket.io');
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/chatapp', {
 
 // Middleware para parsear datos de formularios
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());  // Para manejar JSON
 
 // Middleware para servir archivos estáticos (HTML, CSS, JS)
 app.use(express.static('public'));
@@ -25,12 +27,10 @@ app.use(express.static('public'));
 // Ruta para el registro
 app.post('/registro', async (req, res) => {
     const { username, password } = req.body;
-
     const usuarioExistente = await Usuario.findOne({ username });
     if (usuarioExistente) {
         return res.status(400).send('Usuario ya registrado');
     }
-
     const nuevoUsuario = new Usuario({ username, password });
     await nuevoUsuario.save();
     res.send('Registro exitoso');
@@ -39,44 +39,81 @@ app.post('/registro', async (req, res) => {
 // Ruta para el login
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     const usuario = await Usuario.findOne({ username });
     if (!usuario) {
         return res.status(400).send('Usuario no encontrado');
     }
-
     const esValido = await usuario.comparePassword(password);
     if (!esValido) {
         return res.status(400).send('Contraseña incorrecta');
     }
-
-    // Enviar el nombre de usuario en la respuesta
     res.json({ username: usuario.username });
 });
 
+// Ruta para crear un grupo
+app.post('/crear-grupo', async (req, res) => {
+    const { nombre } = req.body;
+    const grupoExistente = await Grupo.findOne({ nombre });
+    if (grupoExistente) {
+        return res.status(400).send('El grupo ya existe');
+    }
+    const nuevoGrupo = new Grupo({ nombre });
+    await nuevoGrupo.save();
+    res.status(201).json(nuevoGrupo);
+});
 
+// Ruta para obtener todos los grupos
+app.get('/grupos', async (req, res) => {
+    const grupos = await Grupo.find();
+    res.json(grupos);
+});
+
+// Ruta para unirse a un grupo
+app.post('/unirse-grupo', async (req, res) => {
+    const { username, nombreGrupo } = req.body;
+    const usuario = await Usuario.findOne({ username });
+    if (!usuario) {
+        return res.status(400).send('Usuario no encontrado');
+    }
+    const grupo = await Grupo.findOne({ nombre: nombreGrupo });
+    if (!grupo) {
+        return res.status(400).send('Grupo no encontrado');
+    }
+    grupo.miembros.push(usuario._id);
+    await grupo.save();
+    res.status(200).send('Te has unido al grupo');
+});
 
 // Conectar con Socket.IO
+let usuariosConectados = {};  // Almacenar los usuarios conectados y sus grupos
+
 io.on('connection', (socket) => {
     console.log('Nuevo usuario conectado');
 
+    socket.on('join-group', (data) => {
+        const { username, groupName } = data;
+        if (!usuariosConectados[username]) {
+            usuariosConectados[username] = [];
+        }
+        usuariosConectados[username].push(groupName);
+        socket.join(groupName);  // Unir al socket al grupo
+        console.log(`${username} se unió al grupo ${groupName}`);
+    });
+
     socket.on('send-chat-message', (data) => {
-        // Aquí enviamos el mensaje junto con el nombre de usuario
-        io.emit('chat-message', { mensaje: data.mensaje, username: data.username });
+        const { mensaje, username, groupName } = data;
+        // Verificar que el usuario está en el grupo antes de enviar el mensaje
+        if (usuariosConectados[username]?.includes(groupName)) {
+            io.to(groupName).emit('chat-message', { mensaje, username, groupName });
+        }
     });
 
     socket.on('disconnect', () => {
         console.log('Usuario desconectado');
-    });
-});
-
-
-app.post('/logout', (req, res) => {
-    // Lógica para cerrar la sesión (ej. destruir la sesión en el servidor)
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).send('Error al cerrar sesión');
+        for (const username in usuariosConectados) {
+            usuariosConectados[username] = usuariosConectados[username].filter(
+                (groupName) => socket.rooms.has(groupName)
+            );
         }
-        res.sendStatus(200);  // Respuesta exitosa
     });
 });
