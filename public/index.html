@@ -7,28 +7,37 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-
-    <div id="auth-container">
-    <h2>Login</h2>
-    <form id="login-form">
-        <input type="text" id="login-username" placeholder="Usuario" required />
-        <input type="password" id="login-password" placeholder="Contraseña" required />
-        <button type="submit">Iniciar sesión</button>
-    </form>
-
-    <h2>Registro</h2>
-    <form id="register-form">
-        <input type="text" id="register-username" placeholder="Usuario" required />
-        <input type="password" id="register-password" placeholder="Contraseña" required />
-        <button type="submit">Registrarse</button>
-    </form>
-    </div>
+        <h1>Bienvenido a ChatPio🦍</h1>
+        <div id="auth-container">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Usuario" required />
+                <input type="password" id="login-password" placeholder="Contraseña" required />
+                <button type="submit" class="inicio-btt">Iniciar sesión</button>
+            </form>
+        
+            <h2>Registro</h2>
+            <form id="register-form">
+                <input type="text" id="register-username" placeholder="Usuario" required />
+                <input type="password" id="register-password" placeholder="Contraseña" required />
+                <button type="submit" class="registro-btt">Registrarse</button>
+            </form>
+        </div>
 
     <div id="chat-container" style="display:none;">
+        <div class="barra-lateral">
+            <button class="crear-grupo-btt">Crear Grupo</button>
+            <button class="cerrar-sesion-btt">Cerrar Sesion</button>
+            <select name="Seleciona un Usuario" id="" class="select-usuario-select">
+                <option value="">Seleciona un Usuario</option>
+                <!-- Aqui que vaya los usuarios que estan registrados en mongose -->
+            </select>
+            <button class="usuario-btt">Conversar</button>
+        </div>
         <div id="message-container"></div>
         <form id="send-container">
             <input type="text" id="message-input" placeholder="Escribe un mensaje" required />
-            <button type="submit">Enviar</button>
+            <button type="submit" class="btt-enviar">Enviar</button>
         </form>
     </div>
     <script src="/socket.io/socket.io.js"></script>
