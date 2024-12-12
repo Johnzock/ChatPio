@@ -105,3 +105,5 @@ cerrarSesionBtt.addEventListener('click', () => {
     chatContainer.style.display = 'none';
     alert('Sesión cerrada');
 });
+
+
