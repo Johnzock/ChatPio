@@ -79,14 +79,14 @@ button.inicio-btt, button.registro-btt {
 
 /* Barra lateral */
 .barra-lateral {
-  width: 200px;  /* Fijo */
-  background-color: #f1f1f1;
+  width: 20%;  /* Fijo */
+  background-color: #ff0000;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 10px;
   gap: 10px;
-  max-width: 200px;
+  max-width: 100%;
 }
 
 /* Barra lateral privada */

@@ -13,6 +13,7 @@ const selectGrupo = document.getElementById('select-grupo');
 const unirseGrupoBtt = document.querySelector('.unirse-grupo-btt');
 const crearGrupoBtt = document.querySelector('.crear-grupo-btt');
 
+
 let username = '';  // Variable para guardar el nombre de usuario
 let currentGroup = '';  // Almacenar el grupo actual en el que el usuario está
 
@@ -35,6 +36,7 @@ loginForm.addEventListener('submit', async (e) => {
         authContainer.style.display = 'none';
         chatContainer.style.display = 'block';
         cargarGrupos();  // Cargar los grupos disponibles
+        cargarUsuarios();
     } else {
         alert('Error al iniciar sesión');
     }
@@ -128,3 +130,28 @@ crearGrupoBtt.addEventListener('click', async () => {
         }
     }
 });
+
+// Cargar usuarios registrados
+// Cargar usuarios registrados (ya tienes este código)
+async function cargarUsuarios() {
+    const response = await fetch('/usuarios');
+    const usuarios = await response.json();
+
+    // Filtrar el usuario actual
+    const usuariosFiltrados = usuarios
+        .filter(usuario => usuario.username !== username)  // Filtrar por nombre de usuario
+        .map(usuario => usuario.username);  // Extraer solo los nombres de usuario
+
+    // Mostrar los usuarios en el select
+    const selectUsuario = document.getElementById('select-usuario');
+    selectUsuario.innerHTML = '<option value="">Selecciona un usuario</option>';
+
+    usuariosFiltrados.forEach(usuario => {
+        const option = document.createElement('option');
+        option.value = usuario;  // Valor del <option> es el nombre de usuario
+        option.textContent = usuario;  // Texto que se muestra es el nombre de usuario
+        selectUsuario.appendChild(option);
+    });
+}
+
+
