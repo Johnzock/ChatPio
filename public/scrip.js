@@ -1,5 +1,3 @@
-// public/script.js
-
 const socket = io('http://localhost:3000');
 
 // Elementos del DOM
@@ -10,6 +8,8 @@ const messageInput = document.getElementById('message-input');
 const messageContainer = document.getElementById('message-container');
 const authContainer = document.getElementById('auth-container');
 const chatContainer = document.getElementById('chat-container');
+const cerrarSesionBtt = document.querySelector('.cerrar-sesion-btt');
+
 
 let username = '';  // Variable para guardar el nombre de usuario
 
@@ -75,3 +75,18 @@ function appendMessage(mensaje) {
     messageElement.innerText = mensaje;
     messageContainer.appendChild(messageElement);
 }
+
+
+cerrarSesionBtt.addEventListener('click', () => {
+    // Emitir un evento para cerrar sesión en el servidor usando socket.io
+    socket.emit('logout', username);
+
+    // Restablecer el nombre de usuario
+    username = '';
+
+    // Mostrar la pantalla de autenticación y ocultar el chat
+    authContainer.style.display = 'block';
+    chatContainer.style.display = 'none';
+
+    alert('Sesión cerrada');
+});

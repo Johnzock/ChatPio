@@ -55,6 +55,7 @@ app.post('/login', async (req, res) => {
 });
 
 
+
 // Conectar con Socket.IO
 io.on('connection', (socket) => {
     console.log('Nuevo usuario conectado');
@@ -69,3 +70,13 @@ io.on('connection', (socket) => {
     });
 });
 
+
+app.post('/logout', (req, res) => {
+    // Lógica para cerrar la sesión (ej. destruir la sesión en el servidor)
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send('Error al cerrar sesión');
+        }
+        res.sendStatus(200);  // Respuesta exitosa
+    });
+});
