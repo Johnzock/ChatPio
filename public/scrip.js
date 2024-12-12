@@ -67,12 +67,16 @@ unirseGrupoBtt.addEventListener('click', async () => {
             alert(`Te has unido al grupo: ${groupName}`);
             currentGroup = groupName;
             socket.emit('join-group', { username, groupName });  // Unirse al grupo en Socket.IO
+
+            // Limpiar los mensajes anteriores
+            messageContainer.innerHTML = '';  // Limpiar los mensajes previos
             chatContainer.style.display = 'block';
         } else {
             alert('Error al unirse al grupo');
         }
     }
 });
+
 
 // Enviar mensaje
 messageForm.addEventListener('submit', (e) => {
@@ -105,5 +109,22 @@ cerrarSesionBtt.addEventListener('click', () => {
     chatContainer.style.display = 'none';
     alert('Sesión cerrada');
 });
+crearGrupoBtt.addEventListener('click', async () => {
+    const groupName = prompt("Ingresa el nombre del nuevo grupo:");
 
+    if (groupName) {
+        // Enviar solicitud al servidor para crear el grupo
+        const response = await fetch('/crear-grupo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre: groupName }),
+        });
 
+        if (response.ok) {
+            alert('Grupo creado exitosamente');
+            cargarGrupos();  // Recargar los grupos
+        } else {
+            alert('Error al crear el grupo');
+        }
+    }
+});
