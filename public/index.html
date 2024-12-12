@@ -8,31 +8,14 @@
 </head>
 <body>
     <h1>Bienvenido a ChatPio🦍</h1>
-    
-    <!-- Contenedor de autenticación -->
-    <div id="auth-container">
-        <h2>Login</h2>
-        <form id="login-form">
-            <input type="text" id="login-username" placeholder="Usuario" required />
-            <input type="password" id="login-password" placeholder="Contraseña" required />
-            <button type="submit" class="inicio-btt">Iniciar sesión</button>
-        </form>
-        
-        <h2>Registro</h2>
-        <form id="register-form">
-            <input type="text" id="register-username" placeholder="Usuario" required />
-            <input type="password" id="register-password" placeholder="Contraseña" required />
-            <button type="submit" class="registro-btt">Registrarse</button>
-        </form>
-    </div>
 
     <!-- Contenedor del chat -->
-    <div id="chat-container" style="display:none;">
+    <div id="chat-container">
         <h1>Aqui quiero el nombre del chat en donde esta</h1>
         <div class="barra-lateral">
             <button class="crear-grupo-btt">Crear Grupo</button>
             <button class="cerrar-sesion-btt">Cerrar Sesion</button>
-    
+
             <!-- Select para elegir un grupo para unirse -->
             <select name="Selecciona un Grupo" id="select-grupo" class="select-grupo-select">
                 <option value="">Selecciona un Grupo</option>
@@ -55,10 +38,10 @@
             <input type="text" id="message-input" placeholder="Escribe un mensaje" required />
             <button type="submit" class="btt-enviar">Enviar</button>
         </form>
-    </div>    
+    </div>
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="./scrip.js"></script>
+    <script src="./chat.js"></script>
 </body>
 </html>

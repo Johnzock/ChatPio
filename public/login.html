@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <h1>Bienvenido a ChatPio🦍</h1>
+    
+    <!-- Contenedor de Login -->
+    <div id="auth-container">
+    <div id="login-container">
+        <h2>Login</h2>
+        <form id="login-form" action="index.html">
+            <input type="text" id="login-username" placeholder="Usuario" required />
+            <input type="password" id="login-password" placeholder="Contraseña" required />
+            <button type="submit" class="inicio-btt">Iniciar sesión</button>
+        </form>
+        <p>¿No tienes cuenta? <a href="register.html">Registrarse</a></p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./scrip.js"></script>
+</body>
+</html>
