@@ -117,3 +117,12 @@ io.on('connection', (socket) => {
         }
     });
 });
+
+app.get('/usuarios', async (req, res) => {
+    try {
+        const usuarios = await Usuario.find();  // Obtener todos los usuarios registrados
+        res.json(usuarios);  // Responder con los usuarios en formato JSON
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+});
