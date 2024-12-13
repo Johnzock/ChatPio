@@ -4,7 +4,7 @@ const socket = io('http://localhost:3000');
 const registerForm = document.getElementById('register-form');
 const authContainer = document.getElementById('auth-container');
 const chatContainer = document.getElementById('chat-container');
-let username = ''; // Variable para guardar el nombre de usuario
+let username = ''; // Variable para guardar el nombre de usuari
 
 // Registro
 registerForm.addEventListener('submit', async (e) => {
