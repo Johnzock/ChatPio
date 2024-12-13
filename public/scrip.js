@@ -73,7 +73,13 @@ function appendMessage(mensaje) {
     messageElement.innerText = mensaje;
     messageContainer.appendChild(messageElement);
 }
-
+cerrarSesionBtt.addEventListener('click', () => {
+    socket.emit('logout', username);
+    username = '';
+    authContainer.style.display = 'block';
+    chatContainer.style.display = 'none';
+    alert('Sesión cerrada');
+});
 // Crear grupo
 crearGrupoBtt.addEventListener('click', async () => {
     const groupName = prompt("Ingresa el nombre del nuevo grupo:");
